@@ -13,6 +13,8 @@ contract FreeSolidityApplication{
         string clientName;
         string clientPhoneNumber;
         string clientEmail;
+        address clientAddress;
+        uint rank;
     }
     
     struct ServiceProvider{
@@ -40,29 +42,35 @@ contract FreeSolidityApplication{
         _;
     }
    
-   constructor() public{
+    constructor() public{
        contractOwnerAddress = msg.sender;
        serviceIdCounter = 1;
        serviceProviderIdCounter = 1;
        clientIdCounter = 1;
-   }
+    }
    
-   function addNewSupportedService(string memory _serviceName, string memory _serviceDescription) public {
+    function addNewSupportedService(string memory _serviceName, string memory _serviceDescription) public {
        require(contractOwnerAddress == msg.sender);
        uint serviceId = serviceIdCounter++;
        serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
-       }
-   //TODO: Yasser
-   //function registerAsServiceProvider(string memory _serviceProviderName, 
+    }
 
-//TODO: register as client (Sidd)
-//TODO: match client with servive provider (specify service type and rank)
-//TODO: add rank functionallty
+    //TODO: Yasser
+    //function registerAsServiceProvider(string memory _serviceProviderName,
 
-//TODO: return list of services(Jose)   
+    //WIP: register as client (Sidd)
+    function registerAsClient(string memory _clientName, string memory _clientPhoneNumber, string memory _clientEmail) public {
+        uint clientId = clientIdCounter++;
+        uint  initialRank = 5;
+        clientMap[clientId] = Client(clientId,_clientName,_clientPhoneNumber,_clientEmail,msg.sender,initialRank);
+    }
+
+    //TODO: match client with servive provider (specify service type and rank)
+    //TODO: add rank functionallty
+
+    //TODO: return list of services(Jose)
     function getServiceById(uint _serviceId) public view returns (string memory _serviceName){
         _serviceName = serviceMap[_serviceId].serviceName;
         return _serviceName;
     }
 }
-
