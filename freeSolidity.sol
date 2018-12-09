@@ -66,14 +66,14 @@ contract FreeSolidityApplication{
     uint serviceIdCounter;
     uint serviceProviderIdCounter;
     uint clientIdCounter;
-    address contractOwnerAddress;
+    address payable contractOwnerAddress;
     
     mapping (uint => Service) serviceMap;
     mapping (uint => ServiceProvider) serviceProviderMap;
     mapping (uint => Client) clientMap;
     
     // ServiceProvider registration fee payment
-    modifier payServiceProviderRegistrationFee(){
+    modifier payServiceProviderRegistrationFee() {
         require (msg.value >= 2000000000000000000);
         contractOwnerAddress.transfer(msg.value);
         _;
@@ -95,17 +95,17 @@ contract FreeSolidityApplication{
    
    function registerAsServiceProvider(string memory _serviceProviderName, 
    string memory _serviceProviderPhoneNumber, string memory _serviceProviderEmail, address _serviceProviderAddress,
-   uint _rank) public payServiceProviderRegistrationFee {
+   uint _rank) public payServiceProviderRegistrationFee payable{
        
        uint serviceProviderId = serviceProviderIdCounter++;
-       ServiceProvider newServiceProvider = ServiceProvider (serviceProviderId, _serviceProviderName, _serviceProviderPhoneNumber,
-       _serviceProviderEmail, _serviceProviderAddress);
+       ServiceProvider newServiceProvider = new ServiceProvider(serviceProviderId, _serviceProviderName, _serviceProviderPhoneNumber,
+       _serviceProviderEmail, _serviceProviderAddress, _rank);
        serviceProviderMap[serviceProviderId] = newServiceProvider;
    }
    
-  function getServiceById(uint _serviceId) public returns (string memory _serviceName){
-      return serviceMap[_serviceId].serviceName;
-  }
+//   function getServiceById(uint _serviceId) public returns (string memory _serviceName){
+//       return serviceMap[_serviceId].serviceName;
+//   }
 
 // contract avaiableServiceProvider is avaiableService{
     
