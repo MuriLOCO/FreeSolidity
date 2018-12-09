@@ -1,8 +1,6 @@
 pragma solidity ^0.5.1;
-contract availableService{
     
-    uint counter;
-    address contractOnwerAddress;
+contract FreeSolidityApplication{
     
     struct Service{
         uint serviceId;
@@ -10,44 +8,62 @@ contract availableService{
         string serviceDescription;
     }
         
-    mapping (uint => Service) services;
-   
-    constructor() public {
-        contractOnwerAddress = msg.sender;
-        counter = 0;
+    struct Client{
+    
+        uint clientId;
+        string clientName;
+        string clientPhoneNumber;
+        string clientEmail;
     }
-   
-    function createService(string memory _serviceName, string memory _serviceDescription) public {
-        require(contractOnwerAddress == msg.sender,"only the owner can create a service");
-        uint serviceId = counter++;
-        services[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
-    }
-   
-    function getServiceById(uint _serviceId) public view returns (string memory _serviceName){
-        return services[_serviceId].serviceName;
-    }
-}
-
-contract availableServiceProvider is availableService{
     
     struct ServiceProvider{
+    
         uint servicerProviderId;
         string serviceProviderName;
         string serviceProviderPhoneNumber;
         string serviceProviderEmail;
         address serviceProviderAddress;
         uint rank;
-        Service service;
     }
-  
+    
+    uint serviceIdCounter;
+    uint serviceProviderIdCounter;
+    uint clientIdCounter;
+    address payable contractOwnerAddress;
+    
+    mapping (uint => Service) serviceMap;
+    mapping (uint => ServiceProvider) serviceProviderMap;
+    mapping (uint => Client) clientMap;
+    
+    // ServiceProvider registration fee payment
+    modifier payServiceProviderRegistrationFee() {
+        require (msg.value >= 2000000000000000000);
+        contractOwnerAddress.transfer(msg.value);
+        _;
+    }
+   
+   constructor() public{
+       contractOwnerAddress = msg.sender;
+       serviceIdCounter = 0;
+       serviceProviderIdCounter = 0;
+       clientIdCounter = 0;
+   }
+   
+   function addNewSupportedService(string memory _serviceName, string memory _serviceDescription) public {
+       require(contractOwnerAddress == msg.sender);
+    
+    Service memory service;
+    
+    uint serviceId = serviceIdCounter++;
+    service.serviceId = serviceId;
+    serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
+   }
+   
+//   function registerAsServiceProvider(string memory _serviceProviderName, 
+
+   
+    function getServiceById(uint _serviceId) public view returns (string memory _serviceName){
+        return serviceMap[_serviceId].serviceName;
+    }
 }
 
-contract customer{
-    
-    struct Client{
-        uint clientId;
-        string clientName;
-        string clientPhoneNumber;
-        string clientEmail;
-    }
-}
