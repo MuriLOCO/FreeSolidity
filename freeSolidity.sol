@@ -1,5 +1,5 @@
-pragma solidity ^0.5.1;
-contract avaiableService{
+pragma solidity ^0.4.25;
+contract availableService{
     
     uint counter;
     address contractOnwerAddress;
@@ -8,27 +8,27 @@ contract avaiableService{
         uint serviceId;
         string serviceName;
         string serviceDescription;
-        }
+    }
         
     mapping (uint => Service) services;
    
-   constructor() public{
-       contractOnwerAddress = msg.sender;
-       counter = 0;
-   }
+    constructor() public {
+        contractOnwerAddress = msg.sender;
+        counter = 0;
+    }
    
-   function createService(string memory _serviceName, string memory _serviceDescription) public {
-       require(contractOnwerAddress == msg.sender);
-       uint serviceId = counter++;
-       services[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
-   }
+    function createService(string memory _serviceName, string memory _serviceDescription) public {
+        require(contractOnwerAddress == msg.sender,"only the owner can create a service");
+        uint serviceId = counter++;
+        services[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
+    }
    
-   function getServiceById(uint _serviceId) public returns (string memory _serviceName){
-       return services[_serviceId].serviceName;
-   }
+    function getServiceById(uint _serviceId) public view returns (string memory _serviceName){
+        return services[_serviceId].serviceName;
+    }
 }
 
-contract avaiableServiceProvider is avaiableService{
+contract availableServiceProvider is availableService{
     
     struct ServiceProvider{
         uint servicerProviderId;
