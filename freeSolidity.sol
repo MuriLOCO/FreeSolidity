@@ -9,7 +9,6 @@ contract FreeSolidityApplication{
     }
         
     struct Client{
-    
         uint clientId;
         string clientName;
         string clientPhoneNumber;
@@ -17,7 +16,6 @@ contract FreeSolidityApplication{
     }
     
     struct ServiceProvider{
-    
         uint servicerProviderId;
         string serviceProviderName;
         string serviceProviderPhoneNumber;
@@ -44,26 +42,27 @@ contract FreeSolidityApplication{
    
    constructor() public{
        contractOwnerAddress = msg.sender;
-       serviceIdCounter = 0;
-       serviceProviderIdCounter = 0;
-       clientIdCounter = 0;
+       serviceIdCounter = 1;
+       serviceProviderIdCounter = 1;
+       clientIdCounter = 1;
    }
    
    function addNewSupportedService(string memory _serviceName, string memory _serviceDescription) public {
        require(contractOwnerAddress == msg.sender);
-    
-    Service memory service;
-    
-    uint serviceId = serviceIdCounter++;
-    service.serviceId = serviceId;
-    serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
-   }
-   
-//   function registerAsServiceProvider(string memory _serviceProviderName, 
+       uint serviceId = serviceIdCounter++;
+       serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
+       }
+   //TODO: Yasser
+   //function registerAsServiceProvider(string memory _serviceProviderName, 
 
-   
+//TODO: register as client (Sidd)
+//TODO: match client with servive provider (specify service type and rank)
+//TODO: add rank functionallty
+
+//TODO: return list of services(Jose)   
     function getServiceById(uint _serviceId) public view returns (string memory _serviceName){
-        return serviceMap[_serviceId].serviceName;
+        _serviceName = serviceMap[_serviceId].serviceName;
+        return _serviceName;
     }
 }
 
