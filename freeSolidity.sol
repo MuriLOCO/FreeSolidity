@@ -48,6 +48,11 @@ contract FreeSolidityApplication{
        serviceProviderIdCounter = 1;
        clientIdCounter = 1;
     }
+    
+   //This functions convert the String to the Ethereum Hash and compare
+   function compareStrings (string memory a, string memory b) private pure returns (bool){
+       return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
+   }
    
     function addNewSupportedService(string memory _serviceName, string memory _serviceDescription) public {
        require(contractOwnerAddress == msg.sender);
@@ -68,9 +73,16 @@ contract FreeSolidityApplication{
     //TODO: match client with servive provider (specify service type and rank)
     //TODO: add rank functionallty
 
-    //TODO: return list of services(Jose)
-    function getServiceById(uint _serviceId) public view returns (string memory _serviceName){
-        _serviceName = serviceMap[_serviceId].serviceName;
-        return _serviceName;
+    //Jose
+    //Returning lists in Solidity are still not supported and very expensive, so a solution found is to ask the user to
+    //choose a pointer and check if the service exist or not, in this case the user choose a string and we return true and false
+    function getServiceDescriptionOfAServiceByName(string memory _serviceName) public view returns (string memory _serviceDescription){
+        _serviceDescription = "Service does not exist.";
+        for(uint i = 1; i < serviceIdCounter; i++){
+            if(compareStrings(serviceMap[i].serviceName, _serviceName)){
+                _serviceDescription = serviceMap[i].serviceDescription;
+            }
+        }
+        return _serviceDescription;
     }
 }
