@@ -76,13 +76,12 @@ contract FreeSolidityApplication{
     //Jose
     //Returning lists in Solidity are still not supported and very expensive, so a solution found is to ask the user to
     //choose a pointer and check if the service exist or not, in this case the user choose a string and we return true and false
-    function getServiceDescriptionOfAServiceByName(string memory _serviceName) public view returns (string memory _serviceDescription){
-        _serviceDescription = "Service does not exist.";
+    function getServiceDescriptionOfAServiceByName(string memory _serviceName) public view returns (string memory){
         for(uint i = 1; i < serviceIdCounter; i++){
             if(compareStrings(serviceMap[i].serviceName, _serviceName)){
-                _serviceDescription = serviceMap[i].serviceDescription;
+                return serviceMap[i].serviceDescription;
             }
         }
-        return _serviceDescription;
+        return "Service does not exist.";
     }
 }
