@@ -49,7 +49,7 @@ contract FreeSolidityApplication{
        clientIdCounter = 1;
     }
     
-   //This functions convert the String to the Ethereum Hash and compare
+   //This function converts strings to the Ethereum hashes and compares the resulting values
    function compareStrings (string memory a, string memory b) private pure returns (bool){
        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
    }
@@ -70,7 +70,7 @@ contract FreeSolidityApplication{
         clientMap[clientId] = Client(clientId,_clientName,_clientPhoneNumber,_clientEmail,msg.sender,initialRank);
     }
 
-    //TODO: match client with servive provider (specify service type and rank)
+    //TODO: match client with service provider (specify service type)
     //TODO: add rank functionallty
 
     //Jose
