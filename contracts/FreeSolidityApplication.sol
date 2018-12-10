@@ -1,6 +1,8 @@
-pragma solidity ^0.5.1;
+pragma solidity ^0.4.25;
     
 contract FreeSolidityApplication{
+
+    event HelloEvent(string _message, address _sender);
     
     struct Service{
         uint serviceId;
@@ -29,7 +31,7 @@ contract FreeSolidityApplication{
     uint serviceIdCounter;
     uint serviceProviderIdCounter;
     uint clientIdCounter;
-    address payable contractOwnerAddress;
+    address contractOwnerAddress;
     
     mapping (uint => Service) serviceMap;
     mapping (uint => ServiceProvider) serviceProviderMap;
@@ -49,10 +51,11 @@ contract FreeSolidityApplication{
        clientIdCounter = 1;
     }
    
-    function addNewSupportedService(string memory _serviceName, string memory _serviceDescription) public {
+    function addNewSupportedService(string memory _serviceName, string memory _serviceDescription) public returns (string memory){
        require(contractOwnerAddress == msg.sender);
        uint serviceId = serviceIdCounter++;
        serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
+       return "success";
     }
 
     //TODO: Yasser
@@ -70,6 +73,7 @@ contract FreeSolidityApplication{
 
     //TODO: return list of services(Jose)
     function getServiceById(uint _serviceId) public view returns (string memory _serviceName){
+        emit HelloEvent("someone looked up a service by id", msg.sender);
         _serviceName = serviceMap[_serviceId].serviceName;
         return _serviceName;
     }
