@@ -60,8 +60,13 @@ contract FreeSolidityApplication{
        serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
     }
 
-    //TODO: Yasser
-    //function registerAsServiceProvider(string memory _serviceProviderName,
+   function registerAsServiceProvider(string memory _serviceProviderName, string memory _serviceProviderPhoneNumber,
+   string memory _serviceProviderEmail) public payServiceProviderRegistrationFee payable{
+       
+       uint serviceProviderId = serviceProviderIdCounter++;
+       serviceProviderMap[serviceProviderId] = ServiceProvider(serviceProviderId, _serviceProviderName, _serviceProviderPhoneNumber,
+       _serviceProviderEmail, msg.sender, 1);
+   }
 
     //WIP: register as client (Sidd)
     function registerAsClient(string memory _clientName, string memory _clientPhoneNumber, string memory _clientEmail) public {
