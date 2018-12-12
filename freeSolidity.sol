@@ -76,13 +76,16 @@ contract FreeSolidityApplication{
     }
     
    function registerAsServiceProvider (string memory _serviceProviderName, string memory _serviceProviderPhoneNumber,
-   string memory _serviceProviderEmail, string memory _serviceName, uint _ethAmount) public payServiceProviderRegistrationFee payable
-   returns (address){
+   string memory _serviceProviderEmail, string memory _serviceName, uint _ethAmount) public payable payServiceProviderRegistrationFee {
        
        uint serviceProviderId = serviceProviderIdCounter++;
        serviceProviderMap[serviceProviderId] = ServiceProvider(serviceProviderId, _serviceProviderName, _serviceProviderPhoneNumber,
        _serviceProviderEmail, _serviceName, msg.sender, msg.sender, 5, 0, _ethAmount);
-       return serviceProviderMap[serviceProviderId].serviceProviderAddress;
+   }
+   
+   //This function returns the last added Service Provider for testing pourposes (Jose)
+   function showLastRegisteredServiceProvider() view public returns(address){
+       return serviceProviderMap[serviceProviderIdCounter-1].serviceProviderAddress;
    }
 
     //WIP: register as client (Sidd)
