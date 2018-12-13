@@ -65,11 +65,12 @@ contract FreeSolidityApplication{
        clientIdCounter = 1;
     }
     
-   //This function converts strings to the Ethereum hashes and compares the resulting values
+   //Converts strings to the Ethereum hashes and compares the resulting values
    function compareStrings (string memory a, string memory b) private pure returns (bool){
        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
    }
    
+   //Adds new supported server
     function addNewSupportedService (string memory _serviceName, string memory _serviceDescription) public {
        
        require(contractOwnerAddress == msg.sender);
@@ -77,6 +78,7 @@ contract FreeSolidityApplication{
        serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
     }
     
+    //Register a service provider
    function registerAsServiceProvider (string memory _serviceProviderName, string memory _serviceProviderPhoneNumber,
    string memory _serviceProviderEmail, string memory _serviceName, uint _ethAmount) public payable payServiceProviderRegistrationFee {
        
@@ -85,12 +87,12 @@ contract FreeSolidityApplication{
        _serviceProviderEmail, _serviceName, msg.sender, msg.sender, 5, 0, _ethAmount);
    }
    
-   //This function returns the last added Service Provider for testing pourposes (Jose)
+   //Returns the last added Service Provider for testing pourposes
    function showLastRegisteredServiceProvider() view public returns(address){
        return serviceProviderMap[serviceProviderIdCounter-1].serviceProviderAddress;
    }
 
-    //WIP: register as client (Sidd)
+    //Register as client
     function registerAsClient (string memory _clientName, string memory _clientPhoneNumber, string memory _clientEmail, string memory _secret) public {
         uint clientId = clientIdCounter++;
         uint  initialRank = 5;
@@ -98,9 +100,7 @@ contract FreeSolidityApplication{
         msg.sender, initialRank, keccak256(abi.encodePacked(_secret)));
     }
 
-    //TODO: match client with service provider (specify service type)
-
-   //This function add rank to the service provider (Jose)
+    //This function add rank to the service provider (Jose)
     function rankServiceProvider (string memory _servicePoviderName, uint _rank) public{
         uint currentRank = 0;
         uint currentRankEvaluations = 0;
@@ -119,7 +119,6 @@ contract FreeSolidityApplication{
         serviceProviderMap[pointer].rankEvaluation = currentRankEvaluations;
     }
 
-    //Jose
     //Returning lists in Solidity are still not supported and very expensive, so a solution found is to ask the user to
     //choose a pointer and check if the service exist or not, in this case the user choose a string and we return the service description
     function getServiceDescriptionOfAServiceByName (string memory _serviceName) public view returns (string memory){
@@ -131,6 +130,7 @@ contract FreeSolidityApplication{
         return "Service does not exist.";
     }
     
+    //Match the client to the service provider
     function matchClientToServiceProvider (string memory _serviceName) public clientIsRegistered returns (address matchedServiceProviderAddress){
         
         ServiceProvider memory tempServiceProvider = ServiceProvider(0, 'tempName', '000-000-0000',
@@ -149,6 +149,7 @@ contract FreeSolidityApplication{
         return tempServiceProvider.serviceProviderAddress;
     }
     
+    //Check if the client matched to the service provider
    function checkIfClientMatchedToServiceProvider(string memory _serviceName) view public returns(string memory){
         
         for(uint i = 1; i < serviceProviderIdCounter; i++){
@@ -160,6 +161,7 @@ contract FreeSolidityApplication{
        return "Could not find a Match.";
     }    
     
+    //Looks up the service provider by address
     function lookUpServiceProviderByAddress (address _serviceProviderAddress) view public returns (string memory) {
         
         string  memory info = '';
@@ -194,6 +196,7 @@ contract FreeSolidityApplication{
         }
     }
     
+    //Claims the ether which is stored in the contract
     function claim(string memory _secret) public{
         ServiceProvider memory serviceProvider;
         for(uint i = 1; i < serviceProviderIdCounter; i ++){
