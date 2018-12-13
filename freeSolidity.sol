@@ -70,6 +70,7 @@ contract FreeSolidityApplication{
    }
    
     function addNewSupportedService (string memory _serviceName, string memory _serviceDescription) public {
+       
        require(contractOwnerAddress == msg.sender);
        uint serviceId = serviceIdCounter++;
        serviceMap[serviceId] = Service(serviceId, _serviceName, _serviceDescription);
@@ -129,7 +130,7 @@ contract FreeSolidityApplication{
         return "Service does not exist.";
     }
     
-    function matchClientToServiceProvider (string memory _serviceName) public  clientIsRegistered returns (address matchedServiceProviderAddress){
+    function matchClientToServiceProvider (string memory _serviceName) public clientIsRegistered returns (address matchedServiceProviderAddress){
         
         ServiceProvider memory tempServiceProvider = ServiceProvider(0, 'tempName', '000-000-0000',
        'temp@temp.com', _serviceName,msg.sender, msg.sender, 0 , 0, 1000);
@@ -145,27 +146,36 @@ contract FreeSolidityApplication{
         return tempServiceProvider.serviceProviderAddress;
     }
     
-    function lookUpServiceProviderByAddress (address _serviceProviderAddress) public returns (string memory serviceProviderInfo) {
+   function checkIfClientMatchedToServiceProvider() view public returns(string memory){
+        for(uint i = 1; i < serviceProviderIdCounter; i++){
+            if(serviceProviderMap[i].clientWalletAddress == msg.sender){
+                return serviceProviderMap[i].serviceProviderName;
+            }
+        }       
+       return "Could not find a Match.";
+   }    
+    
+    function lookUpServiceProviderByAddress (address _serviceProviderAddress) view public returns (string memory) {
         
-        string memory info = '';
+        string  memory info = '';
         
         for(uint i = 1; i < serviceProviderIdCounter; i++){
             if(serviceProviderMap[i].serviceProviderAddress == _serviceProviderAddress){
-                // info = strConcat(serviceProviderMap[i].serviceProviderName, serviceProviderMap[i].serviceProviderPhoneNumber);
-                // info = strConcat(info,serviceProviderMap[i].serviceProviderEmail);
-                return serviceProviderMap[i].serviceProviderName;
+                info = strConcat(serviceProviderMap[i].serviceProviderName, serviceProviderMap[i].serviceProviderPhoneNumber);
+                info = strConcat(info,serviceProviderMap[i].serviceProviderEmail);
+                return info;
             }
         }
         return "Service Provider does not exist.";
     }
     
-    // function strConcat(string memory _a, string memory _b) internal returns (string memory concatenatedString) {
-    //     bytes memory bytes_a = bytes(_a);
-    //     bytes memory bytes_b = bytes(_b);
-    //     string memory string_ab = new string(bytes_a.length + bytes_b.length);
-    //     bytes memory bytes_ab = bytes(string_ab);
-    //     uint k = 0;
-    //     for (uint i = 0; i < bytes_a.length; i++) bytes_ab[k++] = bytes_a[i];
-    //     return string(bytes_ab);
-    // }
+    function strConcat(string memory _a, string memory _b) internal pure returns (string memory concatenatedString) {
+        bytes memory bytes_a = bytes(_a);
+        bytes memory bytes_b = bytes(_b);
+        string memory string_ab = new string(bytes_a.length + bytes_b.length);
+        bytes memory bytes_ab = bytes(string_ab);
+        uint k = 0;
+        for (uint i = 0; i < bytes_a.length; i++) bytes_ab[k++] = bytes_a[i];
+        return string(bytes_ab);
+    }
 }
