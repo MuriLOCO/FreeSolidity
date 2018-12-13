@@ -18,7 +18,7 @@ contract FreeSolidityApplication{
     }
     
     struct ServiceProvider{
-        uint servicerProviderId;
+        uint serviceProviderId;
         string serviceProviderName;
         string serviceProviderPhoneNumber;
         string serviceProviderEmail;
@@ -139,21 +139,25 @@ contract FreeSolidityApplication{
             if(compareStrings(serviceProviderMap[j].serviceName, _serviceName)){
                 if((serviceProviderMap[j].rank >= tempServiceProvider.rank) && 
                 (serviceProviderMap[j].rate <= tempServiceProvider.rate)){
-                    serviceProviderMap[j].clientWalletAddress = msg.sender;
+                    tempServiceProvider = serviceProviderMap[j];
                 }
             }
         }
+        serviceProviderMap[tempServiceProvider.serviceProviderId].clientWalletAddress = msg.sender;
+        
         return tempServiceProvider.serviceProviderAddress;
     }
     
-   function checkIfClientMatchedToServiceProvider() view public returns(string memory){
+   function checkIfClientMatchedToServiceProvider(string memory _serviceName) view public returns(string memory){
+        
         for(uint i = 1; i < serviceProviderIdCounter; i++){
-            if(serviceProviderMap[i].clientWalletAddress == msg.sender){
+            if((serviceProviderMap[i].clientWalletAddress == msg.sender) && 
+            compareStrings(serviceProviderMap[i].serviceName, _serviceName)){
                 return serviceProviderMap[i].serviceProviderName;
             }
         }       
        return "Could not find a Match.";
-   }    
+    }    
     
     function lookUpServiceProviderByAddress (address _serviceProviderAddress) view public returns (string memory) {
         
@@ -161,21 +165,14 @@ contract FreeSolidityApplication{
         
         for(uint i = 1; i < serviceProviderIdCounter; i++){
             if(serviceProviderMap[i].serviceProviderAddress == _serviceProviderAddress){
-                info = strConcat(serviceProviderMap[i].serviceProviderName, serviceProviderMap[i].serviceProviderPhoneNumber);
-                info = strConcat(info,serviceProviderMap[i].serviceProviderEmail);
+                info = string(abi.encodePacked(
+                    " ServiceProviderName: ", serviceProviderMap[i].serviceProviderName," ServiceProviderPhoneNumber: ",
+                serviceProviderMap[i].serviceProviderPhoneNumber," ServiceProviderEmail: ",
+                serviceProviderMap[i].serviceProviderEmail," ServiceName: "));
                 return info;
             }
         }
         return "Service Provider does not exist.";
     }
     
-    function strConcat(string memory _a, string memory _b) internal pure returns (string memory concatenatedString) {
-        bytes memory bytes_a = bytes(_a);
-        bytes memory bytes_b = bytes(_b);
-        string memory string_ab = new string(bytes_a.length + bytes_b.length);
-        bytes memory bytes_ab = bytes(string_ab);
-        uint k = 0;
-        for (uint i = 0; i < bytes_a.length; i++) bytes_ab[k++] = bytes_a[i];
-        return string(bytes_ab);
-    }
 }
