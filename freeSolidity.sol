@@ -194,4 +194,24 @@ contract FreeSolidityApplication{
         }
     }
     
+    function claim(string memory _secret) public{
+        ServiceProvider memory serviceProvider;
+        for(uint i = 1; i < serviceProviderIdCounter; i ++){
+             if(serviceProviderMap[i].serviceProviderAddress == msg.sender){
+                serviceProvider = serviceProviderMap[i];
+                break;
+            }
+        }
+        bytes32 secret;
+         for(uint i = 1; i < clientIdCounter; i++){
+            if(clientMap[i].clientAddress == serviceProvider.clientWalletAddress){
+                //clientMap[i].secret = keccak256(abi.encodePacked(_secret));
+                secret = clientMap[i].secret;
+                break;
+            }
+        }
+        require(keccak256(abi.encodePacked(_secret)) == secret);
+        msg.sender.transfer(serviceProvider.rate);
+    
+    }
 }
