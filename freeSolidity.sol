@@ -15,6 +15,7 @@ contract FreeSolidityApplication{
         string clientEmail;
         address clientAddress;
         uint rank;
+        bytes32 secret; //This is used to so the service provider can get paid
     }
     
     struct ServiceProvider{
@@ -90,11 +91,11 @@ contract FreeSolidityApplication{
    }
 
     //WIP: register as client (Sidd)
-    function registerAsClient (string memory _clientName, string memory _clientPhoneNumber, string memory _clientEmail) public {
+    function registerAsClient (string memory _clientName, string memory _clientPhoneNumber, string memory _clientEmail, string memory _secret) public {
         uint clientId = clientIdCounter++;
         uint  initialRank = 5;
         clientMap[clientId] = Client(clientId,_clientName,_clientPhoneNumber,_clientEmail,
-        msg.sender, initialRank);
+        msg.sender, initialRank, keccak256(abi.encodePacked(_secret)));
     }
 
     //TODO: match client with service provider (specify service type)
@@ -173,6 +174,24 @@ contract FreeSolidityApplication{
             }
         }
         return "Service Provider does not exist.";
+    }
+    
+     //Starts the job, look for the SP by address and fetch the rate, sends ether to the contract and clients sets secret
+    function startJob(address _serviceProviderAddress, string memory _secret) clientIsRegistered payable public{
+        ServiceProvider memory serviceProvider;
+        for(uint i = 1; i < serviceProviderIdCounter; i++){
+            if(serviceProviderMap[i].serviceProviderAddress == _serviceProviderAddress){
+                serviceProvider = serviceProviderMap[i];
+                break;
+            }
+        }
+       require(msg.value >= serviceProvider.rate);
+       for(uint i = 1; i < clientIdCounter; i++){
+            if(clientMap[i].clientAddress == msg.sender){
+                clientMap[i].secret = keccak256(abi.encodePacked(_secret));
+                break;
+            }
+        }
     }
     
 }
